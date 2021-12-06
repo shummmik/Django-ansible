@@ -1,0 +1,46 @@
+---
+- name: Add the PostgreSQL repository key to the apt trusted keys
+  apt_key: 
+    url: https://www.pgadmin.org/static/packages_pgadmin_org.pub
+    state: present
+
+
+# - name: Add the PostgreSQL repository to the apt sources list
+#   command: sudo sh -c 'echo "deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/$(lsb_release -cs) pgadmin4 main" >> /etc/apt/sources.list.d/pgadmin4.list'
+#   become: no
+
+
+- name: Add the PostgreSQL repository to the apt sources list
+  apt_repository: 
+    repo: deb https://ftp.postgresql.org/pub/pgadmin/pgadmin4/apt/{{ distribution_name }} pgadmin4 main
+    filename: pgadmin4.list
+    state: present
+
+
+- name: Update repositories 
+  apt:
+    name: pgadmin4
+    update_cache: yes
+
+
+- name: Setup login/pass for pgadmin
+  expect:
+    command: /usr/pgadmin4/bin/setup-web.sh
+    responses:
+      'Email\ address:': "{{ pgadmin_name | trim }}"
+      'Password:': "{{ pgadmin_pass | trim }}"
+      'Retype\ password:': "{{ pgadmin_pass | trim }}"
+      'Do\ you\ wish\ to\ continue\ \(y/n\)\?': "y"
+      'Continue\ \(y/n\)\?': "y"
+    echo: yes
+
+
+- name: Ensure the default Apache port is 8080
+  ansible.builtin.lineinfile:
+    path: /etc/apache2/ports.conf
+    regexp: '^Listen 80'
+    line: Listen 8050
+
+
+- name: Restart Apache2
+  service: name=apache2 state=restarted enabled=yes

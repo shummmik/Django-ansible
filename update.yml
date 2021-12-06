@@ -1,0 +1,16 @@
+---
+- hosts: scaleway
+  become: true
+  gather_facts: no
+
+  vars_files:
+    - ./vars/vars.yml
+  roles:
+    - stop_gunicorn
+    - delete_app_dir
+    - drop_db
+    - git
+    - static
+    - postgres_db
+    - django
+    - start_gunicorn

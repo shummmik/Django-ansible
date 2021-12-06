@@ -1,0 +1,6 @@
+AccountID {{ geoip_AccountID }}
+LicenseKey {{ geoip_LicenseKey }}
+
+# Enter the edition IDs of the databases you would like to update.
+# Multiple edition IDs are separated by spaces.
+EditionIDs {{ geoip_EditionIDs }}

@@ -1,0 +1,4 @@
+---
+- name: run сgunicorn.socket
+  become: true
+  command: systemctl start gunicorn.socket

@@ -1,0 +1,25 @@
+---
+
+- name: Copy files to tmp folder
+  command: "aws s3 cp s3://{{ bucket_name }} {{ path_tmp }} --recursive"
+
+
+- name: Unarchive a Media
+  ansible.builtin.unarchive:
+    src: "{{ path_tmp }}/media.zip"
+    dest: "{{ app_dir }}"
+    remote_src: yes
+
+
+- name: Unarchive a geo.zip
+  ansible.builtin.unarchive:
+    src: "{{ path_tmp }}/geo.zip"
+    dest: "{{ app_dir }}"
+    remote_src: yes
+
+
+- name: Unarchive a cost_cfg.zip
+  ansible.builtin.unarchive:
+    src: "{{ path_tmp }}/cost_cfg.zip"
+    dest: "{{ app_dir }}"
+    remote_src: yes

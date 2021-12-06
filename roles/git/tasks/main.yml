@@ -1,0 +1,29 @@
+---
+- name: create app dir
+  file:
+    path: "{{ app_work_dir }}"
+    state: directory
+    mode: 0755
+    owner: ubuntu
+    group: www-data
+
+
+- name: Ensure GitHub deploy key is present on the server.
+  copy:
+    src: templates/git_key
+    dest: "{{ app_work_dir }}/.ssh/deploy_key"
+    mode: 0600
+
+
+# See: https://stackoverflow.com/a/37096534/100134
+- name: Ensure setfacl support is present.
+  package: name=acl
+
+  
+- name: Clone the code repository to the docroot.
+  git:
+    repo: "{{ repo_git_url }}"
+    dest: "{{ app_dir }}" ########
+    clone: yes
+    accept_hostkey: yes
+    key_file: "{{ app_work_dir }}/.ssh/deploy_key"

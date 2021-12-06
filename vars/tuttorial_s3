@@ -1,0 +1,13 @@
+1. Install 
+    apt install awscli
+    pip install awscli awscli-plugin-endpoint
+
+2. Copy .aws in home folder.
+
+3. Copy all files from s3
+    aws s3 cp s3://storage-project {{ path_to_save }} --recursive"
+
+or 
+
+4. Copy files to s3
+    aws s3 cp {{ path_from_move }} s3://storage-project

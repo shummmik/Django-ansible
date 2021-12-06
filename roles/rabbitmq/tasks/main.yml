@@ -1,0 +1,79 @@
+---
+- name: Install required apts
+  apt:
+    name: 
+      - curl
+      - gnupg
+    update_cache: yes
+
+
+# https://github.com/rabbitmq/signing-keys/releases/download/2.0/rabbitmq-release-signing-key.asc
+
+
+- name: Add the RabbitMQ release signing key to the apt trusted keys
+  apt_key: 
+    keyserver: hkps://keys.openpgp.org
+    id: 0A9AF2115F4687BD29803A206B73A36E6026DFCA
+
+
+- name: Add the Erlang repository to the apt sources list
+  apt_repository: 
+    repo: deb https://dl.bintray.com/rabbitmq-erlang/debian {{ distribution_name }} erlang-22.x
+    state: present
+
+
+- name: Add the Rabbitmq repository to the apt sources list
+  apt_repository: 
+    repo: deb https://dl.bintray.com/rabbitmq/debian {{ distribution_name_rabbitmq }} main
+    state: present
+
+
+- name: Install RabbitMQ server
+  become: yes
+  apt:
+    name:
+      - rabbitmq-server
+    update_cache: yes
+
+
+- name: Enable the RabbitMQ Management Console
+  rabbitmq_plugin: names=rabbitmq_management state=enabled
+  notify: restart rabbitmq-server
+
+
+- name: Make sure rabbitmq-server is enabled and running
+  service:
+    name: rabbitmq-server
+    state: started
+    enabled: true
+
+
+- name: Create a vhost for the application
+  rabbitmq_vhost: name={{ rabbitmq_application_vhost }} state=present
+
+
+- name: Create default admin user
+  rabbitmq_user: user={{ rabbitmq_admin_user }}
+                  password={{ rabbitmq_admin_password }}
+                  vhost=/
+                  tags=administrator
+                  state=present
+
+
+- name: Create application user
+  rabbitmq_user: user={{ rabbitmq_application_user }}
+                 password={{ rabbitmq_application_password }}
+                 vhost={{ rabbitmq_application_vhost }}
+                 configure_priv=.*
+                 read_priv=.*
+                 write_priv=.*
+                 state=present
+
+
+- name: Ensure the default 'guest' user doesn't exist
+  rabbitmq_user: user=guest
+                 state=absent
+
+
+- name: Ensure that the RabbitMQ service is running
+  service: name=rabbitmq-server state=started enabled=yes

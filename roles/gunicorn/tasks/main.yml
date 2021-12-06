@@ -1,0 +1,39 @@
+---
+- name: install gunicorn
+  pip:
+    virtualenv: "{{ venv_path }}"
+    name:
+      - gunicorn
+
+
+- name: служебный файл gunicorn.socket для Gunicorn 
+  become: true
+  template:
+    src: templates/gunicorn.socket
+    dest: "/etc/systemd/system/gunicorn.socket"
+
+
+- name: служебный файл gunicorn.service для Gunicorn 
+  become: true
+  template:
+    src: templates/gunicorn.service
+    dest: "/etc/systemd/system/gunicorn.service"
+
+
+- name: run сgunicorn.socket
+  become: true
+  command: systemctl start gunicorn.socket
+
+
+- name: enable gunicorn.socket
+  become: true
+  command: systemctl enable gunicorn.socket
+    
+
+- name: check gunicorn.socket
+  become: true
+  command: systemctl status gunicorn.socket
+
+
+- name: check gunicorn.sock
+  command: file /run/gunicorn.sock

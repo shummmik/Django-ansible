@@ -1,0 +1,16 @@
+---
+
+- name: Create Postgres db 
+  postgresql_db:
+    name: "{{ postgres_db }}"
+    encoding: UTF-8
+  become: True
+  become_user: postgres
+
+
+- name: Restore Postgres db 
+  command: "pg_restore -d {{ postgres_db }} {{ path_tmp }}/cost_db"
+  become: True
+  become_user: postgres
+
+

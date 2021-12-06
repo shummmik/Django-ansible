@@ -1,0 +1,5 @@
+---
+
+- name: Drop db
+  command: sudo -i -u postgres psql -c "DROP DATABASE IF EXISTS  {{ postgres_db }};"
+  become: no

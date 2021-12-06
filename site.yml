@@ -1,0 +1,25 @@
+---
+- hosts: scaleway
+  #common options between modules
+  become: true
+  gather_facts: no
+
+  vars_files:
+    - ./vars/vars.yml
+  roles:
+    - start
+    - git
+    - geoip
+    - rabbitmq
+    - aws
+    - static
+    - postgres
+    - postgres_db
+    - django
+    - gunicorn
+    - nginx
+    - certbot
+    - pgadmin
+    # - fail2ban
+
+

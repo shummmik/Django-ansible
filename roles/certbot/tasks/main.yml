@@ -1,0 +1,43 @@
+---
+- name: Install certbot
+  apt:
+    name: certbot
+    name: python3-certbot-nginx
+    state: present
+
+
+- name: Check if Nginx exists
+  stat: path=/etc/init.d/nginx
+  register: nginx_status
+
+
+- name: Ensure Nginx is stopped
+  service: name=nginx state=stopped
+  when: nginx_status.stat.exists
+
+
+- name: Install certbot and generate cert
+  command: "certbot certonly  --noninteractive  --agree-tos --standalone --email {{ certbot_admin_email }} -d {{ server_name }}"
+
+
+- name: Setup nginx settings
+  expect:
+    command: certbot certonly --nginx
+    responses:
+      (.*)blank to select all options shown(.*): "1"
+      (.*)Select the appropriate number(.*): 'c'
+      \n: '\n'
+    echo: yes
+
+
+- name: add limit on the number of requests
+  ansible.builtin.lineinfile:
+    path: /etc/nginx/sites-available/default
+    regexp: '# include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot'
+    line: "include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot"
+
+
+- name: Ensure Nginx is started
+  service: name=nginx state=started
+
+

@@ -1,0 +1,55 @@
+---
+# --extra-vars "state=dev/"
+##@ref https://docs.ansible.com/ansible/latest/user_guide/playbooks_best_practices.html#variables-and-vaults
+ansible_ssh_user: "ubuntu"
+current_user: "ubuntu"
+server_name: "cost.io" 
+main_app_dir: "cost_project"
+app_name: "cost"
+venv_name_dir: "env"
+distribution_name: 'focal'
+distribution_name_rabbitmq: 'bionic'
+bucket_name: "storage-project"
+
+geoip_AccountID: "123456"
+geoip_LicenseKey: "DheecHFf52hdhu"
+geoip_EditionIDs: "GeoLite2-Country GeoLite2-City"
+geoip_email: "admin@yandex.by"
+
+
+certbot_admin_email: "admin@yandex.by"
+certbot_script: "/opt/certbot-auto"
+certbot_output_dir: "/etc/letsencrypt/live"
+
+log_dir: "/var/log/{{ app_name_dir }}/gunicorn"
+
+letsencrypt_dir: "/etc/letsencrypt/live/{{ server_name }}"
+letsencrypt_cert_filename: "fullchain.pem"
+letsencrypt_privkey_filename: "privkey.pem"
+
+app_work_dir: "/app"
+app_name_dir: "cost"
+app_dir: "{{app_work_dir}}/{{app_name_dir}}"
+
+path_tmp: "{{app_work_dir}}/tmp"
+
+venv_python_version: "3.8"
+venv_path: "{{app_work_dir}}/{{venv_name_dir}}"
+repo_git_url: "git@github.com:cost/cost.git"
+
+
+postgres_host: "localhost"
+postgres_db: "cost"
+postgres_user: "postgres"
+postgres_pass: "root" 
+
+
+pgadmin_name: "user@costprj.ru"
+pgadmin_pass: "1q2w3e4rasdF"
+
+rabbitmq_admin_user: 'admin'
+rabbitmq_admin_password: 'Qwerty123456'
+
+rabbitmq_application_vhost: 'cost_vhost'
+rabbitmq_application_user: 'cost'
+rabbitmq_application_password: 12345

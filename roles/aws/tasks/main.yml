@@ -1,0 +1,32 @@
+---
+
+- name: install aws-cli
+  apt:
+    name: awscli
+    update_cache: yes
+    state: present
+
+
+- name: install pip awscli
+  pip:
+    name:
+      - awscli
+      - awscli-plugin-endpoint
+
+
+- name: Creates directory settings aws
+  file:
+    path: ~/.aws
+    state: directory
+
+
+- name: Copy settings aws config
+  copy:
+    src: templates/config
+    dest: "~/.aws/config"
+
+
+- name: Copy settings aws credentials
+  copy:
+    src: templates/credentials
+    dest: "~/.aws/credentials"

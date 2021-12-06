@@ -1,0 +1,31 @@
+---
+- name: Update repositories 
+  apt:
+    name: git
+    name: libpq-dev
+    name: python3-dev
+    name: python3-pip
+    name: python3-virtualenv
+    update_cache: yes
+    state: present
+
+
+- name: Ensure .ssh directory exists.
+  file:
+    path: "{{ app_work_dir }}/.ssh"
+    state: directory
+    mode: 0700
+
+
+- name: create tmp dir
+  file:
+    path: "{{ path_tmp }}"
+    state: directory
+    mode: 0755
+
+
+- name: create log dir
+  file:
+    path: "{{ log_dir }}"
+    state: directory
+    mode: 0755

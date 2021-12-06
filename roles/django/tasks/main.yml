@@ -1,0 +1,57 @@
+---
+- name: Create the virtualenv
+  command: virtualenv -p {{ venv_python_version }} {{ venv_path }}
+           creates={{ venv_path }}/bin/activate
+
+
+- name: install requirements
+  pip:
+    virtualenv: "{{ venv_path }}"
+    chdir: "{{ app_dir }}"
+    requirements: requirements.txt
+
+
+- name: install gunicorn
+  pip:
+    virtualenv: "{{ venv_path }}"
+    name:
+      - gunicorn
+
+
+- name: Manager is executable
+  file:
+    path: "{{ app_dir }}/manage.py"
+    mode: 0777
+
+
+- name: Collect django
+  django_manage:
+    command: collectstatic
+    app_path: "{{ app_dir }}"
+    virtualenv: "{{ venv_path }}"
+
+
+- name: Make compress
+  shell: "{{ venv_path }}/bin/python3 {{ app_dir }}/manage.py compress --engine jinja2"
+
+
+- name: Migrate django
+  django_manage:
+    command: migrate
+    app_path: "{{ app_dir }}"
+    virtualenv: "{{ venv_path }}"
+
+
+- name: thumbnail clear
+  shell: "{{ venv_path }}/bin/python3 {{ app_dir }}/manage.py thumbnail clear"
+
+
+- name: Ensure that the application file permissions are set properly
+  file: 
+    path: "{{ app_dir }}"
+    recurse: yes
+    owner: ubuntu
+    group: www-data
+    state: directory
+    mode: 0755
+
